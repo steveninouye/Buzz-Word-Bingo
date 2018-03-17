@@ -6,14 +6,14 @@ const PORT = 8080;
 app.get('/', (req, res) => {
   // serves index.html in public folder
 
-  res.send('hello');
+  res.sendFile('public/index.html', { root: __dirname });
 });
 
 app.get('/buzzwords', (req, res) => {
   // retrieves all buzzwords
   // RESPONSE:    { buzzWords : [...] }    => A JSON response containing an array of current buzzwords
 
-  res.send('hello');
+  res.sendFile('public/index.html', { root: __dirname });
 });
 
 app.post('/buzzwords', (req, res) => {
