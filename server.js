@@ -5,16 +5,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ type: false }));
 
 const PORT = 8080;
-let AllBuzzwords = [
-  {
-    buzzWord: 'hello',
-    points: 10
-  },
-  {
-    buzzWord: 'test',
-    points: 15
-  }
-];
+let AllBuzzwords = [];
 let UserScore = 0;
 
 app.get('/', (req, res) => {
@@ -54,13 +45,14 @@ app.put('/buzzwords', (req, res) => {
   // BODY: { buzzWord: String, points: Number };
   const responseStatus =
     req.body.buzzWord && req.body.points
-      ? //////////////////////////TO DO verify POINTS is a number/////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!
-        AllBuzzwords.reduce((a, c, i) => {
-          if (!a) {
-            if (c.buzzWord === req.body.buzzWord) {
-              AllBuzzwords[i].points = req.body.points;
-              a = true;
-            }
+      ? AllBuzzwords.reduce((a, c, i) => {
+          if (
+            !a &&
+            c.buzzWord === req.body.buzzWord &&
+            Number(req.body.points)
+          ) {
+            AllBuzzwords[i].points = Number(req.body.points);
+            a = true;
           }
           return a;
         }, false)
@@ -74,11 +66,9 @@ app.delete('/buzzwords', (req, res) => {
   // BODY: { buzzWord: String }
   const responseStatus = req.body.buzzWord
     ? AllBuzzwords.reduce((a, c, i) => {
-        if (!a) {
-          if (c.buzzWord === req.body.buzzWord) {
-            AllBuzzwords.splice(i, 1);
-            a = true;
-          }
+        if (!a && c.buzzWord === req.body.buzzWord) {
+          AllBuzzwords.splice(i, 1);
+          a = true;
         }
         return a;
       }, false)
@@ -95,16 +85,32 @@ app.post('/reset', (req, res) => {
     AllBuzzwords = [];
     res.send({ success: true });
   } else {
-    res.send({ success: false });
   }
 });
 
 app.post('/heard', (req, res) => {
   // Marks that a buzzword has been heard and should update the total score.  Returns the new total score if successful otherwise returns just false
-  // RESPONSE: { totalSocre: Number }
+  // RESPONSE: { totalScore: Number }
   // BODY: { buzzword: String }
+  const responseStatus = req.body.buzzWord
+    ? AllBuzzwords.reduce((a, c) => {
+        if (!a && c.buzzWord === req.body.buzzWord) {
+          UserScore += c.points;
+          a = true;
+        }
+        return a;
+      }, false)
+    : false;
+  if (responseStatus) {
+    res.send({ totalScore: UserScore });
+  } else {
+    res.send({ success: false });
+  }
+});
 
-  res.send('hello');
+//404 page
+app.use((req, res) => {
+  res.status(404).end('Page Not Available');
 });
 
 app.listen(PORT, () => {
