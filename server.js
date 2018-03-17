@@ -85,6 +85,7 @@ app.post('/reset', (req, res) => {
     AllBuzzwords = [];
     res.send({ success: true });
   } else {
+    res.send({ success: false });
   }
 });
 
