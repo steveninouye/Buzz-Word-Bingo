@@ -16,11 +16,7 @@ app.get('/', (req, res) => {
 app.get('/buzzwords', (req, res) => {
   // retrieves all buzzwords
   // RESPONSE:    { buzzWords : [...] }    => A JSON response containing an array of current buzzwords
-  const arrayOfBuzzwords = AllBuzzwords.reduce((a, c) => {
-    a.push(c.buzzWord);
-    return a;
-  }, []);
-  res.send({ buzzWords: arrayOfBuzzwords });
+  res.send({ buzzWords: AllBuzzwords });
 });
 
 app.post('/buzzwords', (req, res) => {
